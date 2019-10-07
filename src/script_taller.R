@@ -1,6 +1,5 @@
 #' 
 #' MSMK: TALLER DE MACHINE LEARNING
-#' 8 DE ABRIL DE 2019
 #' 
 #' Pablo Hidalgo (pablohigar@gmail.com)
 #' 
@@ -13,8 +12,7 @@
 
 #' En esta práctica vamos a aplicar varias técnicas para
 #' predecir el precio de venta de una casa en función
-#' de sus características características 
-#' (superficie, número de habitaciones, etcétera).
+#' de sus características: superficie, número de habitaciones, etcétera.
 
 
 # DEPENDECIAS -------------------------------------------------------------
