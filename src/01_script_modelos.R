@@ -419,12 +419,13 @@ ggplot(
   )
 ) + 
   geom_point(alpha = 0.4, color = "steelblue", stroke = 0) + 
-  scale_x_continuous(labels = function(x) paste(x, "m²")) +
+  geom_hline(yintercept = 0, color = "firebrick") +
+  scale_x_continuous(labels = function(x) paste(x/100, "k")) +
   theme_minimal() + 
   labs(
     title = "Residuos de la regresión lineal",
     caption = "MSMK: taller de machine learning",
-    x = "Superficie de la vivienda",
+    x = "Valor predicho",
     y = "Residuo (predicción - precio real)"
   ) 
 
@@ -469,7 +470,8 @@ error <- function(real, pred) {
 # cometidos por cada modelo.
 modelo_error <- tibble(
   modelo = "reglineal1",
-  error = error(test_prediction$SalePrice, test_prediction$predict_reglineal1)
+  error = error(test_prediction$SalePrice,
+                test_prediction$predict_reglineal1)
 )
 
 # Cuando se entrena un modelo,
@@ -544,7 +546,8 @@ library(glmnet)
 train_x <- select(houses_training, -Id, -SalePrice) %>% 
   as.matrix()
 
-reglineal_glmnet <- glmnet(x = train_x, y = houses_training$SalePrice)
+reglineal_glmnet <- glmnet(x = train_x, 
+                           y = houses_training$SalePrice)
 
 
 test_x <- select(houses_test, -Id, -SalePrice) %>% 
@@ -570,7 +573,8 @@ reg_lineal_log <- lm(log(SalePrice)~.-Id, data = houses_training)
 
 summary(reg_lineal2)
 
-test_prediction$predict_reglineal_log <- exp(predict(reg_lineal_log, newdata = houses_test))
+test_prediction$predict_reglineal_log <- exp(predict(reg_lineal_log, 
+                                                     newdata = houses_test))
 
 modelo_error <- bind_rows(modelo_error,
                           list(modelo = "reg_lineal_log", 
@@ -648,7 +652,7 @@ modelo_error <- bind_rows(modelo_error,
 
 library(randomForest)
 
-?randomForest
+
 rf <- randomForest(x = train_x,
                    y = houses_training$SalePrice
                    )
