@@ -1,0 +1,322 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Taller de ML: práctica},
+            pdfauthor={Pablo Hidalgo},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Taller de ML: práctica}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Pablo Hidalgo}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{Entrega: 21/10/2019}
+
+
+\begin{document}
+\maketitle
+
+Esta práctica consiste en la aplicación de los contenidos que se han
+visto en el taller de ML. \textbf{La fecha límite de entrega es el 21 de
+octubre.} La entrega deberá consistir en
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{script de R} donde aparezca todo el código empleado para
+  realizar la práctica. Es recomendable utilizar comentarios para
+  aclarar el código (recuerda, para escribir un comentario empieza por
+  la línea \texttt{\#}),
+\item
+  \textbf{documento en pdf} donde aparezcan los gráficos, resultados y
+  se hagan los comentarios apropiados. Se puede hacer en cualquier
+  editor de texto (por ejemplo, word) y luego exportase a pdf.
+\end{itemize}
+
+\hypertarget{los-datos}{%
+\section{Los datos}\label{los-datos}}
+
+Para esta entrega vamos a utilizar unos datos muy similares a los vistos
+en clase. Son datos de \textbf{ventas de casas} pero de otra zona de
+Estados Unidos, en concreto del Condado de King (Washington).
+
+Las variables de este conjunto de datos son:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{id}: identificador único de cada casa vendida.
+\item
+  \texttt{date}: fecha de venta.
+\item
+  \texttt{price}: precio de venta (en dólares).
+\item
+  \texttt{bedrooms}: número de habitaciones.
+\item
+  \texttt{bathrooms}: número de baños donde \(0.5\) significa una
+  habitación con aseo (baño sin ducha).
+\item
+  \texttt{sqft\_living}: área habitable de la casa (en pies cuadrados).
+\item
+  \texttt{sqft\_lot}: área de la parcela (en pies cuadrados).
+\item
+  \texttt{floors}: número de plantas de la vivienda.
+\item
+  \texttt{waterfront}: variable binaria (\emph{dummy}) indicando si la
+  vivienda tiene vistas al mar o no.
+\item
+  \texttt{view}: índice (0-4) de las vistas.
+\item
+  \texttt{condition}: índice (1-5) del estado de la vivienda.
+\item
+  \texttt{grade}: índice (1-13) de la calidad de la construcción y
+  diseño.
+\item
+  \texttt{sqft\_above}: área de la parte que está por encima del nivel
+  del suelo (en pies cuadrados).
+\item
+  \texttt{sqft\_basement}: área del sótano (en pies cuadrados).
+\item
+  \texttt{yr\_built}: año de construcción.
+\item
+  \texttt{yr\_renovated}: año de la última reforma.
+\item
+  \texttt{zipcode}: código postal.
+\item
+  \texttt{lat}: latitud.
+\item
+  \texttt{long}: longitud.
+\item
+  \texttt{sqft\_living15}: área de vivienda media de las 15 casas más
+  próximas (en pies cuadrados).
+\item
+  \texttt{sqft\_lot15}: área de parcela media de las 15 casas más
+  próximas (en pies cuadrados).
+\end{itemize}
+
+\hypertarget{desarrollo-de-la-practica.}{%
+\section{Desarrollo de la práctica.}\label{desarrollo-de-la-practica.}}
+
+Comienza cargando el archivo \texttt{.csv} en la memoria de R. Para
+ello, recuerda que puedes utilizar la función \texttt{read\_csv()}
+(previamente, deberías haber cargado la librería \texttt{tidyverse}).
+
+Inspecciona las variables del conjunto de datos mediante la función
+\texttt{skim()} del paquete \texttt{skimr}. Comenta el resultado
+destacando aquello que encuentres más relevante.
+
+Al tratarse, de nuevo, de un conjunto de datos de Estados Unidos, las
+variables de superficie vienen expresadas en pies cuadrados.
+\textbf{Convierte todas las variables de superficie a metros cuadrados.}
+
+Estos datos contienen la ubicación (latitud y longitud) de cada venta.
+Existen paquetes específicos para poder visualizar esta información.
+\textbf{Instala el paquete \texttt{leaflet} y ejecuta la siguiente
+sentencia:}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(leaflet)}
+\CommentTok{# Susituye nombre_datos por el nombre que tengan tus datos }
+\KeywordTok{leaflet}\NormalTok{(nombre_datos) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{addTiles}\NormalTok{() }\OperatorTok{%>%}\StringTok{ }\KeywordTok{addCircleMarkers}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Representa la relación que hay entre la superificie de cada
+vivienda y su precio con un gráfico de puntos. Cambia el título y el
+nombre de los ejes para hacerlo más fácil de leer.}
+
+\textbf{Divide el conjunto de datos en \texttt{train} y \texttt{test} de
+forma que sean el 80\% y el 20\% de los datos, respectivamente.}
+
+\textbf{Justifica qué variables del conjunto de datos debería excluirse
+de un modelo para predecir el precio de venta.}
+
+Ajusta primero un modelo de regresión lineal utilizando solamente la
+superficie de la casa para predecir el precio de venta (llama a este
+modelo \texttt{lm1}). Entrena otro modelo utilizando la superficie y la
+variable \texttt{grade} (llámalo \texttt{lm2}). \textbf{Comenta ambos
+modelos y sus diferencias.}
+
+Ejecuta las siguientes líneas de código:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#Cambia datos_test por el nombre que le hayas dado a test}
+\NormalTok{pred_test <-}\StringTok{ }\KeywordTok{select}\NormalTok{(datos_test, price)}
+\NormalTok{pred_test}\OperatorTok{$}\NormalTok{pred_lm1 <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(lm1, }\DataTypeTok{newdata =}\NormalTok{ datos_test)}
+\NormalTok{pred_test}\OperatorTok{$}\NormalTok{pred_lm2 <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(lm2, }\DataTypeTok{newdata =}\NormalTok{ datos_test)}
+\NormalTok{rmse <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(price, pred) }\KeywordTok{sqrt}\NormalTok{(}\KeywordTok{mean}\NormalTok{((price }\OperatorTok{-}\StringTok{ }\NormalTok{pred)}\OperatorTok{^}\DecValTok{2}\NormalTok{))}
+\NormalTok{error <-}\StringTok{ }\KeywordTok{tibble}\NormalTok{(}
+  \DataTypeTok{modelo =} \KeywordTok{c}\NormalTok{(}\StringTok{"lm1"}\NormalTok{, }\StringTok{"lm2"}\NormalTok{),}
+  \DataTypeTok{error =} \KeywordTok{c}\NormalTok{(}\KeywordTok{rmse}\NormalTok{(pred_test}\OperatorTok{$}\NormalTok{price, pred_test}\OperatorTok{$}\NormalTok{pred_lm1), }\KeywordTok{rmse}\NormalTok{(pred_test}\OperatorTok{$}\NormalTok{price, pred_test}\OperatorTok{$}\NormalTok{pred_lm2))}
+\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Representa el gráfico de residuos de ambos modelos y coméntalos.
+
+En clase hemos visto el modelo de Gradient Boosting, uno de los modelos
+de \emph{machine learning} más utilizados. Ejecuta el siguiente código
+cambiando lo necesario:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{train_x <-}\StringTok{ }\KeywordTok{select}\NormalTok{(datos_train, }
+                  \OperatorTok{-}\NormalTok{nombre_variable_precio, }
+                  \OperatorTok{-}\NormalTok{nombre_variable_id,}
+                  \OperatorTok{-}\NormalTok{nombre_variable_fecha) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{as.matrix}\NormalTok{()}
+
+\NormalTok{test_x <-}\StringTok{ }\KeywordTok{select}\NormalTok{(datos_test, }
+                 \OperatorTok{-}\NormalTok{nombre_variable_precio, }
+                 \OperatorTok{-}\NormalTok{nombre_variable_id, }
+                 \OperatorTok{-}\NormalTok{nombre_variable_fecha) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{as.matrix}\NormalTok{()}
+\NormalTok{test_x[}\KeywordTok{is.na}\NormalTok{(test_x)] <-}\StringTok{ }\DecValTok{0}
+
+
+\KeywordTok{library}\NormalTok{(xgboost)}
+
+\NormalTok{gradient_boost <-}\StringTok{ }\KeywordTok{xgboost}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ train_x, }
+                          \DataTypeTok{label =}\NormalTok{ datos_train}\OperatorTok{$}\NormalTok{nombre_variable_precio,}
+                          \DataTypeTok{nrounds =} \DecValTok{1000}\NormalTok{,}
+                          \DataTypeTok{params =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{eta =} \FloatTok{0.01}\NormalTok{, }
+                                        \DataTypeTok{max_depth =} \DecValTok{3}\NormalTok{,}
+                                        \DataTypeTok{colsample_bytree =} \FloatTok{0.75}
+\NormalTok{                                        )}
+\NormalTok{                          )}
+
+
+
+
+\NormalTok{pred_test}\OperatorTok{$}\NormalTok{pred_bst <-}\StringTok{ }\KeywordTok{predict}\NormalTok{(gradient_boost, test_x)}
+
+\NormalTok{error <-}\StringTok{ }\NormalTok{error }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{bind_rows}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DataTypeTok{modelo =} \StringTok{"bst"}\NormalTok{, }\DataTypeTok{error =} \KeywordTok{rmse}\NormalTok{(pred_test}\OperatorTok{$}\NormalTok{price, pred_test}\OperatorTok{$}\NormalTok{pred_bst)))}
+\end{Highlighting}
+\end{Shaded}
+
+De los modelos que hemos entrenado, \textbf{¿con cuál te quedarías y por
+qué?}
+
+\hypertarget{explicatividad}{%
+\section{Explicatividad}\label{explicatividad}}
+
+Esribe y comenta los gráficos que consideres necesarios para interpretar
+el algoritmo de \emph{Gradient boosting}.
+
+
+\end{document}
