@@ -1,0 +1,863 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={1. Transformación de los datos},
+            pdfauthor={Minería de datos II},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{1. Transformación de los datos}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \subtitle{Taller: calidad del aire}
+  \author{Minería de datos II}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{Curso 2019/2020}
+
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\hypertarget{introduccion}{%
+\section{Introducción}\label{introduccion}}
+
+El ayuntamiento de Madrid nos ha contratado para desarrollar un
+\textbf{modelo de la contaminación} que permita predecir el nivel de
+contaminación que habrá al día siguiente. Nos han enviado un conjunto de
+datos con mediciones diarias de la \textbf{calidad del aire de la ciudad
+de Madrid}. Aunque existen varias medidas que hay que tener en cuenta
+para medir la calidad del aire, el ayuntamiento nos ha pedido que
+elaboremos el modelo solamente para predecir \textbf{PM2.5}: \textbf{la
+concentración de partículas en suspensión de menos de \(2.5\) micras.}
+
+Cualquier proyecto de minería de datos va a tener, al menos, \textbf{3
+fases}:
+
+\begin{itemize}
+\tightlist
+\item
+  Tratamiento de datos.
+\item
+  Modelización.
+\item
+  Evaluación.
+\end{itemize}
+
+Empezaremos por importar los datos y hacer las transformaciones
+necesarias sobre ellos para poder empezar a trabajar.
+
+\hypertarget{entorno}{%
+\section{Entorno}\label{entorno}}
+
+Cuando se trabaja en un proyecto real, es importante ser \emph{ordenado}
+en los códigos desarrollados ya que solemos trabajar en equipo. Abre el
+proyecto de RStudio que hemos creado en clase y crea una \textbf{nueva
+carpeta} que se llame \texttt{taller\_calidad\_aire}. Dentro de esta
+carpeta, crea otras dos que se denominen \texttt{data} y \texttt{src}.
+En la primera de ellas guardaremos los datos que puedes descargar del
+aula virtual. En la segunda carpeta será donde iremos desarrollando los
+scripts (\texttt{source}, es una práctica habitual en programación).
+
+\hypertarget{transformacion-de-los-datos}{%
+\section{Transformación de los
+datos}\label{transformacion-de-los-datos}}
+
+\begin{quote}
+Crea un \textbf{script R} en la carpeta
+\texttt{taller\_calidad\_aire/src} que se llame
+\texttt{01\_transformacion.R}; será el script que desarrollaremos en
+este documento.
+\end{quote}
+
+Un paquete muy importante en R para el tratamiento de datos es
+\texttt{tidyverse}. Recuerda que este paquete contiene, a su vez, otros
+paquetes. Cárgalo al principio del script (si no lo tienes instalado,
+deberás instalarlo primero):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{importacion}{%
+\subsection{Importación}\label{importacion}}
+
+A continuación necesitamos \textbf{importar los datos} para poder
+empezar a trabajar con ellos:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire <-}\StringTok{ }\KeywordTok{read_csv}\NormalTok{(}\StringTok{"taller_calidad_aire/data/calidad_aire.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Parsed with column specification:
+## cols(
+##   .default = col_character(),
+##   PROVINCIA = col_double(),
+##   ESTACION = col_double(),
+##   MAGNITUD = col_double(),
+##   ANO = col_double()
+## )
+\end{verbatim}
+
+\begin{verbatim}
+## See spec(...) for full column specifications.
+\end{verbatim}
+
+El archivo que estamos cargando tiene extensión \texttt{csv}
+(\emph{comma-separated value}) un formato de datos muy utilizado para el
+intercambio de información. Si abres el archivo original, verás que la
+primera linea contiene el nombre de las variables separadas por comas y,
+el resto de líneas, contienen los datos:
+
+\begin{verbatim}
+## PROVINCIA,MUNICIPIO,ESTACION,MAGNITUD,PUNTO_MUESTREO,ANO,MES,D01,V01,D02,V02,D03,V03,D04,V04,D05,V05,D06,V06,D07,V07,D08,V08,D09,V09,D10,V10,D11,V11,D12,V12,D13,V13,D14,V14,D15,V15,D16,V16,D17,V17,D18,V18,D19,V19,D20,V20,D21,V21,D22,V22,D23,V23,D24,V24,D25,V25,D26,V26,D27,V27,D28,V28,D29,V29,D30,V30,D31,V31
+## 28,079,4,1,28079004_1_38,2019,01,00018,V,00020,V,00018,V,00019,V,00018,V,00018,V,00021,V,00020,V,00018,V,00013,V,00016,V,00016,V,00016,V,00022,V,00021,V,00016,V,00015,V,00014,V,00012,V,00014,V,00015,V,00014,V,00016,V,00017,V,00018,V,00016,V,00015,V,00015,V,00015,V,00014,V,00014,V
+## 28,079,4,1,28079004_1_38,2019,02,00013,V,00013,V,00014,V,00018,V,00019,V,00019,V,00019,V,00016,V,00016,V,00014,V,00015,V,00016,V,00017,V,00017,V,00017,V,00015,V,00017,V,00018,V,00018,V,00018,V,00017,V,00020,V,00019,V,00018,V,00019,V,00018,V,00019,V,00020,V,00000,N,00000,N,00000,N
+\end{verbatim}
+
+En el aula virtual también tienes el archivo
+\texttt{Interprete\_ficheros\_calidad\_del\_aire\_global.pdf} con las
+descripción de cómo son los datos y qué estructura tienen.
+
+\hypertarget{estructura-de-los-datos}{%
+\subsection{Estructura de los datos}\label{estructura-de-los-datos}}
+
+Podemos inspeccionarlos en la consola para ver cómo los ha importado R:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 5,301 x 69
+##    PROVINCIA MUNICIPIO ESTACION MAGNITUD PUNTO_MUESTREO   ANO MES   D01   V01  
+##        <dbl> <chr>        <dbl>    <dbl> <chr>          <dbl> <chr> <chr> <chr>
+##  1        28 079              4        1 28079004_1_38   2019 01    00018 V    
+##  2        28 079              4        1 28079004_1_38   2019 02    00013 V    
+##  3        28 079              4        1 28079004_1_38   2019 03    00018 V    
+##  4        28 079              4        1 28079004_1_38   2019 04    00003 V    
+##  5        28 079              4        1 28079004_1_38   2019 05    00001 V    
+##  6        28 079              4        1 28079004_1_38   2019 06    00001 V    
+##  7        28 079              4        1 28079004_1_38   2019 07    00001 V    
+##  8        28 079              4        1 28079004_1_38   2019 08    00008 V    
+##  9        28 079              4        1 28079004_1_38   2019 09    00008 V    
+## 10        28 079              4        1 28079004_1_38   2019 10    00010 V    
+## # ... with 5,291 more rows, and 60 more variables: D02 <chr>, V02 <chr>,
+## #   D03 <chr>, V03 <chr>, D04 <chr>, V04 <chr>, D05 <chr>, V05 <chr>,
+## #   D06 <chr>, V06 <chr>, D07 <chr>, V07 <chr>, D08 <chr>, V08 <chr>,
+## #   D09 <chr>, V09 <chr>, D10 <chr>, V10 <chr>, D11 <chr>, V11 <chr>,
+## #   D12 <chr>, V12 <chr>, D13 <chr>, V13 <chr>, D14 <chr>, V14 <chr>,
+## #   D15 <chr>, V15 <chr>, D16 <chr>, V16 <chr>, D17 <chr>, V17 <chr>,
+## #   D18 <chr>, V18 <chr>, D19 <chr>, V19 <chr>, D20 <chr>, V20 <chr>,
+## #   D21 <chr>, V21 <chr>, D22 <chr>, V22 <chr>, D23 <chr>, V23 <chr>,
+## #   D24 <chr>, V24 <chr>, D25 <chr>, V25 <chr>, D26 <chr>, V26 <chr>,
+## #   D27 <chr>, V27 <chr>, D28 <chr>, V28 <chr>, D29 <chr>, V29 <chr>,
+## #   D30 <chr>, V30 <chr>, D31 <chr>, V31 <chr>
+\end{verbatim}
+
+El conjunto de datos contiene \textbf{69 variables} y \textbf{5301
+filas}. Tenemos \textbf{dos grupos de variables}. El primero de ellos
+contiene la información para identificar cómo, dónde y cuándo se ha
+realizado una medición:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{PROVINCIA}
+\item
+  \texttt{MUNICIPIO}
+\item
+  \texttt{ESTACION}
+\item
+  \texttt{MAGNITUD}
+\item
+  \texttt{PUNTO\_MUESTREO}
+\item
+  \texttt{ANO}
+\item
+  \texttt{MES}
+\end{itemize}
+
+El segundo grupo de variables contiene una variable para cada día del
+mes \texttt{D01}, \texttt{D02}, \texttt{D03}, \ldots{}, \texttt{D31} con
+el valor de la magnitud medida y, asociada a cada variable, otras
+\texttt{V01}, \texttt{V02}, \ldots{}, \texttt{V31} que indican si la
+medida ha sido comprobada y es correcta (\texttt{V}) o no (\texttt{N}).
+
+\begin{quote}
+\textbf{Esta estructura de los datos no es adecuada para realizar los
+análisis}. Imagina que quisiésemos obtener \textbf{la medición de la
+magnitud 1 de todos los lunes del año}. En este caso, la estructura de
+los datos hace difícil responder a esa pregunta.
+\end{quote}
+
+\hypertarget{eliminacion-de-variables-irrelevantes}{%
+\subsection{Eliminación de variables
+irrelevantes}\label{eliminacion-de-variables-irrelevantes}}
+
+Antes de cambiar la estructura, vamos a hacer algunas operaciones de
+limpieza. Aunque no es imprescindible, vamos a convertir el nombre de
+las variables a minúscula con la función \texttt{tolower} para favorecer
+la consistencia:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{names}\NormalTok{(calidad_aire) <-}\StringTok{ }\KeywordTok{tolower}\NormalTok{(}\KeywordTok{names}\NormalTok{(calidad_aire))}
+\end{Highlighting}
+\end{Shaded}
+
+Puede que \textbf{algunas variables sean prescindibles}. Por ejemplo, a
+veces se da el caso de que hay \textbf{variables con un único valor}
+(\emph{variables unarias}) y que, por tanto, no aportan nada al
+análisis. Por ejemplo, la variable \texttt{provincia} es una de ellas.
+Podemos comprobarlo pidiédole a R que nos diga cuántos valores distintos
+contiene esta variable:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{length}\NormalTok{(}\KeywordTok{unique}\NormalTok{(calidad_aire}\OperatorTok{$}\NormalTok{provincia))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1
+\end{verbatim}
+
+Obviamente, si el número de variables es elevado (en este caso son 69),
+no podemos hacer esta comprabación de forma manual. Podemos escribir el
+siguiente bucle para comprobarlo automáticamente:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{var_unarias <-}\StringTok{ }\KeywordTok{c}\NormalTok{()}
+\ControlFlowTok{for}\NormalTok{ (var }\ControlFlowTok{in} \KeywordTok{names}\NormalTok{(calidad_aire))\{}
+  \ControlFlowTok{if}\NormalTok{ (}\KeywordTok{length}\NormalTok{(}\KeywordTok{unique}\NormalTok{(calidad_aire[[var]])) }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{)\{}
+\NormalTok{    var_unarias <-}\StringTok{ }\KeywordTok{c}\NormalTok{(var_unarias, var)}
+\NormalTok{  \}}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Opcional:} \emph{aunque el bucle anterior es perfectamente
+válido, conforme se va ganando experiencia en programación, se busca
+escribir código lo más legible posible ya que esto facilitará la tarea
+de corregir errores. Una alternativa al código anterior podría ser:}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{var_unarias <-}\StringTok{ }\KeywordTok{sapply}\NormalTok{(calidad_aire, }\ControlFlowTok{function}\NormalTok{(x)}\KeywordTok{length}\NormalTok{(}\KeywordTok{unique}\NormalTok{(x)) }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{)}
+\NormalTok{var_unarias <-}\StringTok{ }\KeywordTok{names}\NormalTok{(calidad_aire)[var_unarias]}
+\end{Highlighting}
+\end{Shaded}
+
+El vector que obtenemos contiene solamente dos variables
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{var_unarias}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "provincia" "municipio"
+\end{verbatim}
+
+Por tanto, eliminamos estas dos variables del conjunto de datos
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{provincia <-}\StringTok{ }\OtherTok{NULL}
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{municipio <-}\StringTok{ }\OtherTok{NULL}
+\end{Highlighting}
+\end{Shaded}
+
+Además, la variable \texttt{punto\_muestreo} no es relevante para
+nuestro estudio (según el pdf de la documentación, este campo es la
+concatenación de provincia, municipio, estación, magnitud y la técnica
+de muestreo, información que ya tenemos recogida en otras variables) y
+procedemos a eliminarla también:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{punto_muestreo <-}\StringTok{ }\OtherTok{NULL}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{formato-adecuado-de-variables}{%
+\subsection{Formato adecuado de
+variables}\label{formato-adecuado-de-variables}}
+
+El siguiente paso es comprobar que las variables estén en el formato
+adecuado:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{glimpse}\NormalTok{(calidad_aire)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Observations: 5,301
+## Variables: 66
+## $ estacion <dbl> 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4...
+## $ magnitud <dbl> 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 6, 6, 6, 6, 6, 6, 6, 6, 6...
+## $ ano      <dbl> 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019, 2019...
+## $ mes      <chr> "01", "02", "03", "04", "05", "06", "07", "08", "09", "10"...
+## $ d01      <chr> "00018", "00013", "00018", "00003", "00001", "00001", "000...
+## $ v01      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d02      <chr> "00020", "00013", "00018", "00004", "00001", "00001", "000...
+## $ v02      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d03      <chr> "00018", "00014", "00017", "00004", "00001", "00001", "000...
+## $ v03      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d04      <chr> "00019", "00018", "00017", "00003", "00002", "00001", "000...
+## $ v04      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d05      <chr> "00018", "00019", "00016", "00002", "00002", "00002", "000...
+## $ v05      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d06      <chr> "00018", "00019", "00016", "00002", "00003", "00002", "000...
+## $ v06      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d07      <chr> "00021", "00019", "00014", "00002", "00003", "00002", "000...
+## $ v07      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d08      <chr> "00020", "00016", "00016", "00003", "00003", "00002", "000...
+## $ v08      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d09      <chr> "00018", "00016", "00016", "00003", "00002", "00001", "000...
+## $ v09      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d10      <chr> "00013", "00014", "00017", "00003", "00002", "00002", "000...
+## $ v10      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d11      <chr> "00016", "00015", "00017", "00004", "00002", "00002", "000...
+## $ v11      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d12      <chr> "00016", "00016", "00016", "00003", "00001", "00003", "000...
+## $ v12      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d13      <chr> "00016", "00017", "00017", "00003", "00002", "00002", "000...
+## $ v13      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d14      <chr> "00022", "00017", "00016", "00003", "00001", "00003", "000...
+## $ v14      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d15      <chr> "00021", "00017", "00019", "00003", "00002", "00002", "000...
+## $ v15      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d16      <chr> "00016", "00015", "00017", "00002", "00002", "00003", "000...
+## $ v16      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d17      <chr> "00015", "00017", "00017", "00002", "00003", "00003", "000...
+## $ v17      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d18      <chr> "00014", "00018", "00015", "00002", "00002", "00002", "000...
+## $ v18      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d19      <chr> "00012", "00018", "00016", "00002", "00002", "00002", "000...
+## $ v19      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d20      <chr> "00014", "00018", "00015", "00002", "00002", "00002", "000...
+## $ v20      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d21      <chr> "00015", "00017", "00017", "00002", "00003", "00002", "000...
+## $ v21      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d22      <chr> "00014", "00020", "00017", "00003", "00003", "00002", "000...
+## $ v22      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d23      <chr> "00016", "00019", "00017", "00002", "00003", "00002", "000...
+## $ v23      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d24      <chr> "00017", "00018", "00017", "00001", "00003", "00002", "000...
+## $ v24      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d25      <chr> "00018", "00019", "00017", "00002", "00002", "00003", "000...
+## $ v25      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d26      <chr> "00016", "00018", "00009", "00002", "00001", "00002", "000...
+## $ v26      <chr> "V", "V", "V", "V", "V", "N", "V", "V", "V", "V", "V", "V"...
+## $ d27      <chr> "00015", "00019", "00006", "00003", "00002", "00001", "000...
+## $ v27      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d28      <chr> "00015", "00020", "00007", "00002", "00001", "00001", "000...
+## $ v28      <chr> "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d29      <chr> "00015", "00000", "00006", "00002", "00001", "00001", "000...
+## $ v29      <chr> "V", "N", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d30      <chr> "00014", "00000", "00004", "00002", "00001", "00001", "000...
+## $ v30      <chr> "V", "N", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"...
+## $ d31      <chr> "00014", "00000", "00004", "00000", "00002", "00000", "000...
+## $ v31      <chr> "V", "N", "V", "N", "V", "N", "V", "V", "N", "V", "N", "V"...
+\end{verbatim}
+
+La primera variable que nos encontramos en un formato no adecuado es
+\texttt{mes}. Esta variable aparece como carácter (\texttt{char})
+mientras que lo lógico sería que fuese un número (en particular, un
+número entero). Podemos convertirla de la siguiente forma:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{mes <-}\StringTok{ }\KeywordTok{as.integer}\NormalTok{(calidad_aire}\OperatorTok{$}\NormalTok{mes)}
+\end{Highlighting}
+\end{Shaded}
+
+Algo parecido nos sucede con las mediciones. Todas las variables
+\texttt{d01}, \texttt{d02}, etcétera son carácter cuando deberían ser
+numéricas. En este caso, convertirlas al formato adecuado es algo más
+complejo. Aunque hay distintas formas de hacerlo, vamos a recurrir a una
+función del paquete \texttt{tidyverse} que cargamos al principio:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire <-}\StringTok{ }\KeywordTok{mutate_at}\NormalTok{(calidad_aire, }\KeywordTok{vars}\NormalTok{(}\KeywordTok{starts_with}\NormalTok{(}\StringTok{"d"}\NormalTok{)), as.numeric)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{quote}
+\textbf{Si alguna de las funciones que utilizamos no entiendes bien su
+uso, asegúrate de acudir a la ayuda (\texttt{?mutate\_at})}
+\end{quote}
+
+\hypertarget{cambio-de-estructura}{%
+\subsection{Cambio de estructura}\label{cambio-de-estructura}}
+
+Ahora es donde llegamos a la transformación realmente importante. No es
+una buena idea mantener la estructura actual de los datos. Fíjate en que
+no es una forma natural de representar la información, hay meses que
+tienen 31 días, otros 30 y febrero aún menos. Esto supondrá que no es
+eficiente esa codificación. Lo que nos gustaría es poder construir una
+variable que exprese el día del mes y una única variable con la medición
+correspondiente.
+
+Para ello, primero separamos el conjunto de datos en dos, uno para las
+variables con el valor de la magnitud (\texttt{d01},
+\texttt{d02},\ldots{}) y otro con las que verifican ese valor
+(\texttt{v01}, \texttt{v02},\ldots{}).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire_medicion <-}\StringTok{ }\NormalTok{calidad_aire }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(}
+\NormalTok{    estacion}\OperatorTok{:}\NormalTok{mes,}
+    \KeywordTok{starts_with}\NormalTok{(}\StringTok{"d"}\NormalTok{)}
+\NormalTok{  )}
+
+\NormalTok{calidad_aire_validado <-}\StringTok{ }\NormalTok{calidad_aire }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(}
+\NormalTok{    estacion}\OperatorTok{:}\NormalTok{mes,}
+    \KeywordTok{starts_with}\NormalTok{(}\StringTok{"v"}\NormalTok{)}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+Ahora, convertimos los datos con ayuda de la función
+\texttt{pivot\_longer} (\textbf{nota}: \emph{asegúrate de que entiendes
+qué es lo que queremos hacer y cómo nos ayuda esta función a
+conseguirlo}).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire_medicion <-}\StringTok{ }\NormalTok{calidad_aire_medicion }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{pivot_longer}\NormalTok{(}
+    \DataTypeTok{cols =}\NormalTok{ d01}\OperatorTok{:}\NormalTok{d31,}
+    \DataTypeTok{names_to =} \StringTok{"dia"}\NormalTok{,}
+    \DataTypeTok{values_to =} \StringTok{"medicion"}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+Obtenemos así la siguiente estructura del \texttt{data.frame}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire_medicion}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 164,331 x 6
+##    estacion magnitud   ano   mes dia   medicion
+##       <dbl>    <dbl> <dbl> <int> <chr>    <dbl>
+##  1        4        1  2019     1 d01         18
+##  2        4        1  2019     1 d02         20
+##  3        4        1  2019     1 d03         18
+##  4        4        1  2019     1 d04         19
+##  5        4        1  2019     1 d05         18
+##  6        4        1  2019     1 d06         18
+##  7        4        1  2019     1 d07         21
+##  8        4        1  2019     1 d08         20
+##  9        4        1  2019     1 d09         18
+## 10        4        1  2019     1 d10         13
+## # ... with 164,321 more rows
+\end{verbatim}
+
+Nos falta modificar la variable \texttt{dia} para que se numérica.
+Fíjate que todos los valores empiezan por \texttt{d}, así que no podemos
+utilizar directamente \texttt{as.numeric}. Primero tendremos que
+eliminar esa \texttt{d}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire_medicion}\OperatorTok{$}\NormalTok{dia <-}\StringTok{ }\KeywordTok{substr}\NormalTok{(calidad_aire_medicion}\OperatorTok{$}\NormalTok{dia, }\DataTypeTok{start =} \DecValTok{2}\NormalTok{, }\DataTypeTok{stop =} \DecValTok{3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Y después convertir a numérica que, en este caso, como el día va a ser
+un número entero, utilizamos \texttt{as.integer}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire_medicion}\OperatorTok{$}\NormalTok{dia <-}\StringTok{ }\KeywordTok{as.integer}\NormalTok{(calidad_aire_medicion}\OperatorTok{$}\NormalTok{dia)}
+\end{Highlighting}
+\end{Shaded}
+
+Repetimos el mismo procedimiento con \texttt{calidad\_aire\_validado}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire_validado <-}\StringTok{ }\NormalTok{calidad_aire_validado }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{pivot_longer}\NormalTok{(}
+    \DataTypeTok{cols =}\NormalTok{ v01}\OperatorTok{:}\NormalTok{v31,}
+    \DataTypeTok{names_to =} \StringTok{"dia"}\NormalTok{,}
+    \DataTypeTok{values_to =} \StringTok{"validado"}
+\NormalTok{  )}
+
+\NormalTok{calidad_aire_validado}\OperatorTok{$}\NormalTok{dia <-}\StringTok{ }\KeywordTok{substr}\NormalTok{(calidad_aire_validado}\OperatorTok{$}\NormalTok{dia, }\DataTypeTok{start =} \DecValTok{2}\NormalTok{, }\DataTypeTok{stop =} \DecValTok{3}\NormalTok{)}
+\NormalTok{calidad_aire_validado}\OperatorTok{$}\NormalTok{dia <-}\StringTok{ }\KeywordTok{as.integer}\NormalTok{(calidad_aire_validado}\OperatorTok{$}\NormalTok{dia)}
+\end{Highlighting}
+\end{Shaded}
+
+Ahora, cruzaremos la información que tenemos de la medición y su
+corresponiente validación:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire <-}\StringTok{ }\NormalTok{calidad_aire_medicion }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{left_join}\NormalTok{(calidad_aire_validado)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Joining, by = c("estacion", "magnitud", "ano", "mes", "dia")
+\end{verbatim}
+
+\hypertarget{eliminacion-de-observaciones-erroneas}{%
+\subsection{Eliminación de observaciones
+erróneas}\label{eliminacion-de-observaciones-erroneas}}
+
+Aquellas mediciones que no hayan sido validadas, contienen un valor que
+no podemos estar seguros de su uso. Vamos a convertir a \texttt{NA}
+aquellas mediciones no validadas.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{medicion[calidad_aire}\OperatorTok{$}\NormalTok{validado }\OperatorTok{==}\StringTok{ "N"}\NormalTok{] <-}\StringTok{ }\OtherTok{NA}
+\end{Highlighting}
+\end{Shaded}
+
+Tenemos todavía un problema que resolver: hay observaciones que no
+tienen sentido. Por ejemplo, tenemos una observación para el 30 de
+febrero:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{filter}\NormalTok{(calidad_aire, mes }\OperatorTok{==}\StringTok{ }\DecValTok{2}\NormalTok{, dia }\OperatorTok{==}\StringTok{ }\DecValTok{30}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 455 x 7
+##    estacion magnitud   ano   mes   dia medicion validado
+##       <dbl>    <dbl> <dbl> <int> <int>    <dbl> <chr>   
+##  1        4        1  2019     2    30       NA N       
+##  2        4        6  2019     2    30       NA N       
+##  3        4        7  2019     2    30       NA N       
+##  4        4        8  2019     2    30       NA N       
+##  5        4       12  2019     2    30       NA N       
+##  6        8        1  2019     2    30       NA N       
+##  7        8        6  2019     2    30       NA N       
+##  8        8        7  2019     2    30       NA N       
+##  9        8        8  2019     2    30       NA N       
+## 10        8        9  2019     2    30       NA N       
+## # ... with 445 more rows
+\end{verbatim}
+
+\begin{quote}
+\textbf{Ejercicio}: elimina del conjunto de datos \texttt{calidad\_aire}
+todas las observaciones erróneas. Es decir, en aquellos meses con 30
+días, no debería aparecer la observación con valor \texttt{dia\ =\ 31}.
+También hay que eliminar las observaciones que no tiene sentido del mes
+de febrero (cuidado con los bisiestos).
+\end{quote}
+
+\hypertarget{medicion-en-columnas}{%
+\subsection{Medición en columnas}\label{medicion-en-columnas}}
+
+Si te fijas, tenemos una medición asociada a cada \textbf{día},
+\textbf{magnitud} y \textbf{estación de medición}. Vamos a simplificar
+este conjunto de datos de forma que tengamos la \textbf{medición diaria
+media para cada magnitud}. Esto podemos hacerlo de la siguiente forma:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire <-}\StringTok{ }\NormalTok{calidad_aire }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(magnitud, ano, mes, dia) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{summarise}\NormalTok{(}\DataTypeTok{medicion =} \KeywordTok{mean}\NormalTok{(medicion, }\DataTypeTok{na.rm =} \OtherTok{TRUE}\NormalTok{)) }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{ungroup}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+Para terminar la preparación de los datos, nos gustaría que cada
+magnitud estuviese recogida en una variable. Primero, la variable
+\texttt{magnitud} está codificada mediante números que no son muy
+informativos. En la documentación aparece con qué magnitud se
+corresponde cada número. Lo podemos traducir de la siguiente manera:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{unique}\NormalTok{(calidad_aire}\OperatorTok{$}\NormalTok{magnitud)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1]  1  6  7  8  9 10 12 14 20 30 35 42 43 44
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2 <-}\StringTok{ }\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud}
+
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2[calidad_aire}\OperatorTok{$}\NormalTok{magnitud }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{] <-}\StringTok{ "so2"}
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2[calidad_aire}\OperatorTok{$}\NormalTok{magnitud }\OperatorTok{==}\StringTok{ }\DecValTok{6}\NormalTok{] <-}\StringTok{ "co"}
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2[calidad_aire}\OperatorTok{$}\NormalTok{magnitud }\OperatorTok{==}\StringTok{ }\DecValTok{7}\NormalTok{] <-}\StringTok{ "no"}
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2[calidad_aire}\OperatorTok{$}\NormalTok{magnitud }\OperatorTok{==}\StringTok{ }\DecValTok{8}\NormalTok{] <-}\StringTok{ "no2"}
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2[calidad_aire}\OperatorTok{$}\NormalTok{magnitud }\OperatorTok{==}\StringTok{ }\DecValTok{9}\NormalTok{] <-}\StringTok{ "pm25"}
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2[calidad_aire}\OperatorTok{$}\NormalTok{magnitud }\OperatorTok{==}\StringTok{ }\DecValTok{10}\NormalTok{] <-}\StringTok{ "pm10"}
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2[calidad_aire}\OperatorTok{$}\NormalTok{magnitud }\OperatorTok{==}\StringTok{ }\DecValTok{12}\NormalTok{] <-}\StringTok{ "nox"}
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2[calidad_aire}\OperatorTok{$}\NormalTok{magnitud }\OperatorTok{==}\StringTok{ }\DecValTok{14}\NormalTok{] <-}\StringTok{ "o3"}
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2[calidad_aire}\OperatorTok{$}\NormalTok{magnitud }\OperatorTok{==}\StringTok{ }\DecValTok{20}\NormalTok{] <-}\StringTok{ "tol"}
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2[calidad_aire}\OperatorTok{$}\NormalTok{magnitud }\OperatorTok{==}\StringTok{ }\DecValTok{30}\NormalTok{] <-}\StringTok{ "ben"}
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2[calidad_aire}\OperatorTok{$}\NormalTok{magnitud }\OperatorTok{==}\StringTok{ }\DecValTok{35}\NormalTok{] <-}\StringTok{ "ebe"}
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2[calidad_aire}\OperatorTok{$}\NormalTok{magnitud }\OperatorTok{==}\StringTok{ }\DecValTok{42}\NormalTok{] <-}\StringTok{ "tch"}
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2[calidad_aire}\OperatorTok{$}\NormalTok{magnitud }\OperatorTok{==}\StringTok{ }\DecValTok{43}\NormalTok{] <-}\StringTok{ "ch4"}
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2[calidad_aire}\OperatorTok{$}\NormalTok{magnitud }\OperatorTok{==}\StringTok{ }\DecValTok{44}\NormalTok{] <-}\StringTok{ "nmhc"}
+
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud <-}\StringTok{ }\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2}
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2 <-}\StringTok{ }\OtherTok{NULL}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Opcional:} una buena práctica en programación es no repetir
+innecesariamente el código escrito. En el trozo de código que acabamos
+de escribir, esto no se cumple, haciendo un código difícil de leer y de
+corregir si se produce un error. Una forma algo más elegante de hacerlo
+podría ser:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{magnitud_diccionario <-}\StringTok{ }\KeywordTok{tribble}\NormalTok{(}
+  \OperatorTok{~}\NormalTok{magnitud, }\OperatorTok{~}\NormalTok{magnitud2,}
+   \DecValTok{1}\NormalTok{,  }\StringTok{"so2"}\NormalTok{,}
+   \DecValTok{6}\NormalTok{,   }\StringTok{"co"}\NormalTok{,}
+   \DecValTok{7}\NormalTok{,   }\StringTok{"no"}\NormalTok{,}
+   \DecValTok{8}\NormalTok{,  }\StringTok{"no2"}\NormalTok{,}
+   \DecValTok{9}\NormalTok{, }\StringTok{"pm25"}\NormalTok{,}
+  \DecValTok{10}\NormalTok{, }\StringTok{"pm10"}\NormalTok{,}
+  \DecValTok{12}\NormalTok{,  }\StringTok{"nox"}\NormalTok{,}
+  \DecValTok{14}\NormalTok{,   }\StringTok{"o3"}\NormalTok{,}
+  \DecValTok{20}\NormalTok{,  }\StringTok{"tol"}\NormalTok{,}
+  \DecValTok{30}\NormalTok{,  }\StringTok{"ben"}\NormalTok{,}
+  \DecValTok{35}\NormalTok{,  }\StringTok{"ebe"}\NormalTok{,}
+  \DecValTok{42}\NormalTok{,  }\StringTok{"tch"}\NormalTok{,}
+  \DecValTok{43}\NormalTok{,  }\StringTok{"ch4"}\NormalTok{,}
+  \DecValTok{44}\NormalTok{,  }\StringTok{"nmhc"}
+\NormalTok{  )}
+
+\NormalTok{calidad_aire <-}\StringTok{ }\NormalTok{calidad_aire }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{left_join}\NormalTok{(magnitud_diccionario)}
+  
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud <-}\StringTok{ }\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud2}
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{magnitud <-}\StringTok{ }\OtherTok{NULL}
+\end{Highlighting}
+\end{Shaded}
+
+En realidad, cada magnitud debería ser una variable distinta. Es decir,
+nos gustaría tener una variable para \texttt{so2}, otra para
+\texttt{co}, etcétera. Para ello, hay que hacer la operación
+\emph{contraria} a la que ya hicimos con \texttt{pivot\_longer}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire <-}\StringTok{ }\NormalTok{calidad_aire }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{pivot_wider}\NormalTok{(}\DataTypeTok{names_from =}\NormalTok{ magnitud, }
+              \DataTypeTok{values_from =}\NormalTok{ medicion}
+\NormalTok{              )}
+\end{Highlighting}
+\end{Shaded}
+
+Esto nos lleva a tener un conjunto de datos listo para empezar a
+trabajar la modelización:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1,064 x 17
+##      ano   mes   dia   so2    co    no   no2  pm25  pm10   nox    o3   tol   ben
+##    <dbl> <int> <int> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+##  1  2017     1     1   9   0.48   33.6  48    22.3  24.8  99.5 13.8   2.54  1.18
+##  2  2017     1     2  10.6 0.5    32.2  53.4  19.8  25.6 103.  16.1   2.96  1.1 
+##  3  2017     1     3  11.9 0.67   85.4  67.2  25.8  37.8 198.   7.69  5.48  1.62
+##  4  2017     1     4  11.1 0.73  103.   68.7  26.8  40.6 227.   8.29  7.44  2.02
+##  5  2017     1     5  10   0.733  89.1  65.8  24.2  34.6 202.   8.43  6.56  1.86
+##  6  2017     1     6  11.5 0.64   71.6  58.8  15.8  21.2 169.  15.6   5.62  1.7 
+##  7  2017     1     7  11.8 0.62   67.2  64    15.5  22.3 167.  15     3.6   1.28
+##  8  2017     1     8  12.2 0.66   64.2  65.7  19.7  24.6 164.  10.1   4.08  1.46
+##  9  2017     1     9  12.9 0.722  95    76.1  16.3  25.8 222.   8.92  4.22  1.58
+## 10  2017     1    10  15.5 0.76  104.   77.5  20.5  32.3 237.   8.69  7.2   1.8 
+## # ... with 1,054 more rows, and 4 more variables: ebe <dbl>, tch <dbl>,
+## #   ch4 <dbl>, nmhc <dbl>
+\end{verbatim}
+
+Por último, nos será útil tener una nueva variable fecha
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{fecha <-}\StringTok{ }\KeywordTok{as.Date}\NormalTok{(}\KeywordTok{ISOdate}\NormalTok{(}\DataTypeTok{year =}\NormalTok{ calidad_aire}\OperatorTok{$}\NormalTok{ano, }
+                                      \DataTypeTok{month =}\NormalTok{ calidad_aire}\OperatorTok{$}\NormalTok{mes, }
+                                      \DataTypeTok{day =}\NormalTok{ calidad_aire}\OperatorTok{$}\NormalTok{dia}
+\NormalTok{                                      )}
+\NormalTok{                              )}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{exportacion-de-la-informacion}{%
+\section{Exportación de la
+información}\label{exportacion-de-la-informacion}}
+
+Ya dijimos que cualquier proyecto de minería de datos va a estar
+dividido en etapas. Estas etapas, en función de cómo sean los datos,
+pueden tardar tiempo en ejecutarse. Por tanto, siempre que se concluye
+una etapa, se guardan los datos resultantes para no tener que volver a
+ejecutar el proceso. Además, recuerda que \textbf{R trabaja en memoria},
+es decir, si cierras RStudio y vuelves a abrirlo, habrán desaparecido
+los datos con los que estábamos trabajando.
+
+Para guardar en el disco duro un \texttt{data.frame}, lo podemos hacer
+de la siguiente forma:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{saveRDS}\NormalTok{(calidad_aire, }\DataTypeTok{file =} \StringTok{"taller_calidad_aire/data/01_transformacion.RDS"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+Este archivo está en un \textbf{formato que solo entiende R} ya que
+todavía tenemos que seguir trabajando con esos datos mediante R. Si
+estuviésemos en la etapa final, lo adecuado sería guardar el archivo en
+un formato que pudiese leer cualquier programa (por ejemplo,
+\texttt{.csv}).
+
+
+\end{document}

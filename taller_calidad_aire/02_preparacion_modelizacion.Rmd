@@ -1,0 +1,153 @@
+---
+title: "2. Preparación para modelización"
+subtitle: "Taller: calidad del aire"
+author: "Minería de datos II"
+date: "Curso 2019/2020"
+output: 
+  pdf_document:
+    number_sections: true
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Entorno
+
+Crea un **script R** en la carpeta `taller_calidad_aire/src` que se llame `02_preparacion_modelizacion.R`; será el script que desarrollaremos en este documento.
+
+Al principio del script, carga el paquete `tidyverse`:
+
+```{r}
+library(tidyverse)
+```
+
+# Importación de datos
+
+Para comenzar a trabajar, necesitamos importar los datos que obtuvimos de la fase anterior. Como lo que guardamos fue un archivo `.RDS`, los datos ya serán un `data.frame` de R y, por tanto, no tenemos que preocuparnos del formato de los datos como teníamos que hacerlo con un `.csv`.
+
+```{r}
+calidad_aire <- readRDS("taller_calidad_aire/data/01_transformacion.RDS")
+```
+
+
+# Análisis exploratorio de datos
+
+Antes de realizar cualquier transformación sobre los datos, necesitamos conocerlos en profundidad. En cualquier proyecto de minería de datos, una de las primeras fases una vez que los datos se han importado correctamente es hacer un **análisis exploratorio de datos** (*EDA*).
+
+Un paquete que nos puede ayudar a esto es el paquete `skimr`. Este paquete nos da un resumen de los datos.
+
+```{r eval=FALSE}
+skimr::skim(calidad_aire)
+```
+
+```{r echo=FALSE}
+skimr::skim_without_charts(calidad_aire)
+```
+
+
+> **Nota:** recuerda que al escribir `skimr::skim` le estamos diciendo a R que utilice la función `skim` que pertence al paquete `skimr`. Esto es útil cuando queremos utilizar la función `skim` una única vez y, por lo tanto, no hace falta hacer `library(skimr)`.
+
+Si te fijas en la columan `m_missing` del resultado anterior, sabemos que no tenemos ningún dato ausente en ninguna variable. Por lo tanto, no hará falta recurrir a la imputación de valores ausentes.
+
+En el apartado de la variable fecha de la salida anterior podemos ver que los datos van desde el `2017-01-01` hasta `2019-11-30`. 
+
+La variable que queremos predecir es `pm25`, así que vamos a estudiarla en más detalle.
+
+## Variable `pm25`
+
+```{r}
+ggplot(data = calidad_aire,
+       aes(x = fecha, y = pm25)) + 
+  geom_line()
+```
+
+
+En el gráfico anterior de puede apreciar un patrón *ondulante* que parece repetirse anualmente. Podemos verlo de forma más clara si añadimos la capa `geom_smooth()`
+
+```{r}
+ggplot(data = calidad_aire,
+       aes(x = fecha, y = pm25)) + 
+  geom_line() +
+  geom_smooth()
+```
+
+La distribución de la variable podemos verla mediante un histograma:
+
+```{r}
+ggplot(data = calidad_aire,
+       aes(x = pm25)) + 
+  geom_histogram()
+```
+
+
+# Construcción de variables
+
+Recordemos que el objetivo es **predecir el valor de `pm25` en el día posterior**. Eso significa que, si queremos predecir el valor para el 9 de febrero, tenemos que suponer que **solamente conocemos la información hasta el día 8 de febrero**. Por lo tanto, el valor que podremos utilizar de las variables para predecir un día, debe ser la información disponible hasta el día anterior. Por ejemplo, no podemos utilizar el valor de `so2` en el mismo día que el valor de `pm25` que queremos predecir. Necesitamos que el valor de cada variable esté *retrasado* en un día. Esto lo podemos hacer mediante la función `lag`. Para entenderlo, vamos hacer primero un ejemplo. Si tuviésemos el vector `c(1,2,3,4)`, si aplicamos la función `lag` obtendríamos
+
+```{r}
+lag(c(1,2,3,4))
+```
+
+Obviamente, el valor anterior del primer elemento del vector es desconocido y por eso aparece como `NA`. 
+
+Antes de utilizar la función `lag` debemos asegurarnos de que los datos estén ordenados de menor a mayor por la variable fecha, porque en caso contrario no tendría sentido lo que estaríamos haciendo:
+
+```{r}
+calidad_aire <- arrange(calidad_aire, fecha)
+```
+
+Y ahora generamos una nueva variable `_lag` por cada variable que tengamos que retrasar. Por ejemplo
+
+```{r eval=FALSE}
+calidad_aire$so2_lag <- lag(calidad_aire$so2)
+```
+
+Este procedimiento habría que repetirlo demasiadas veces y sería demasiado pesado para hacerlo de forma manual. Para *automatizarlo* podemos utilizar la función `mutate_at`:
+
+```{r}
+calidad_aire <- calidad_aire %>% 
+  mutate_at(vars(so2:nmhc), list(lag = lag))
+```
+
+**Nota**: lo que acabamos de hacer se puede traducir como: aplica la función `lag` a aquellas variables que están entre `so2` y `nmhc`. Al utilizar `list(lag = lag)`, cada variable que se crea termina en `_lag`.
+
+Para finalizar la creación de estas variables, debemos eliminar todas las variables que no son lag y quedarnos solamente con `pm25` que es la variable que queremos predecir.
+
+```{r}
+calidad_aire <- calidad_aire %>% 
+  select(fecha, ano:dia, so2_lag:nmhc_lag, pm25)
+```
+
+Es interesante conocer la correlación de la variable objetivo con respecto a las predictoras:
+
+```{r}
+cor(calidad_aire$pm25, 
+    select(calidad_aire, ends_with("lag")), 
+    use = "complete.obs"
+    )
+```
+
+> **Nota**: en la correlación utilizamos `use = "complete.obs"` para que no tenga en cuenta los `NA` en el cálculo.
+
+Puedes ver que la mayor correlación de `pm25` se da con `pm25_lag`.
+
+
+# Train y test
+
+Por último, como hacemos habitualmente, vamos a dividir el conjunto de datos en `train` y `test`. Entrenaremos con datos hasta `2019-09-01` y los restantes para `test`:
+```{r}
+train <- calidad_aire[calidad_aire$fecha < as.Date("2019-09-01"),]
+test <- calidad_aire[calidad_aire$fecha >= as.Date("2019-09-01"),]
+```
+
+# Exportación de la información
+
+Igual que hicimos en la fase anterior, alamacenamos estos datos en el disco duro.
+
+```{r}
+saveRDS(train, file = "taller_calidad_aire/data/train.RDS")
+saveRDS(test, file = "taller_calidad_aire/data/test.RDS")
+```

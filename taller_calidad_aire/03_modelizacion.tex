@@ -1,0 +1,259 @@
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\usepackage{hyperref}
+\hypersetup{
+            pdftitle={3. Modelización (Práctica)},
+            pdfauthor={Minería de datos II},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+
+\title{3. Modelización (Práctica)}
+\providecommand{\subtitle}[1]{}
+\subtitle{Taller: calidad del aire}
+\author{Minería de datos II}
+\date{Curso 2019/2020}
+
+\begin{document}
+\maketitle
+
+En esta práctica vamos a utilizar los datos de \textbf{calidad del aire}
+que hemos trabajado en clase para aplicar los modelos de minería de
+datos que conocemos.
+
+Rercuerda:
+
+\begin{quote}
+\textbf{El objetivo es predecir el nivel de \texttt{pm25} para el día
+siguiente}. Esto permitirá al ayuntamiento activar los protocolos
+anticontaminación con la suficiente antelación.
+\end{quote}
+
+\textbf{La entrega consistirá en un script R donde se lleven a cabo
+todos los pasos y un archivo .RDS con los RMSE resultantes de los
+distintos modelos. Se indicará claramente en los comentarios con qué
+pregunta se corresponde cada sección del código. Se valorará
+positivamente que el código esté lo más limpio y ordenado posible y el
+uso de comentarios relevantes.}
+
+\hypertarget{paso-1-2-puntos}{%
+\section{Paso 1 (2 puntos)}\label{paso-1-2-puntos}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Importa los datos de \texttt{train} y \texttt{test} que generamos en
+  la preparación de la modelización. Para evitar problemas que hayáis
+  podido tener, en el aula virtual estań subidos los conjuntos de datos
+  \texttt{train.RDS} y \texttt{test.RDS} que hemos generado en clase.
+\item
+  La primera observación de \texttt{train} no tendrá sentido ya que
+  \textbf{todas las variables \texttt{\_lag} aparecerán como
+  \texttt{NA}}. Elimina esta primera observación de \texttt{train}.
+\item
+  Elimina la columna fecha de \texttt{train} y \texttt{test}.
+\end{enumerate}
+
+\hypertarget{paso-2-1.5-puntos}{%
+\section{Paso 2 (1.5 puntos)}\label{paso-2-1.5-puntos}}
+
+En el segundo pdf puedes ver que la variable más correlacionada con
+\texttt{pm25} era ella misma en el instante anterior, es decir,
+\texttt{pm25\_lag}.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Representa en un \textbf{diagrama de dispersión} (recuerda que en
+  ggplot tienes que usar \texttt{geom\_point}) la relación entre ambas
+  variables. Como es habitual, en el eje x representa la variable
+  predictora \texttt{pm25\_lag} y el eje y, la variable objetivo
+  \texttt{pm25}.
+\end{enumerate}
+
+En muchos proyectos, antes de abordar la modelización con modelos
+complejos, se comienza realizando una modelización muy simple que se
+suele denominar \emph{baseline} y que nos permite compararla con otros
+modelos más complejos que podamos utilizar así como hacernos la pregunta
+de si vale la pena ese esfuerzo.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Genera un modelo denominado \texttt{mod\_baseline} que sea una
+  regresión lineal (utiliza la función \texttt{lm}) que prediga
+  \texttt{pm25} utilizando solamente \texttt{pm25\_lag}. Genera la
+  predicción de test en un objeto llamado \texttt{pred\_baseline},
+  calcula su RMSE y guárdalo en una variable llamada
+  \texttt{rmse\_baseline} (puedes utilizar \texttt{source} para importar
+  la función \texttt{rmse} que hemos creado en clase).
+\end{enumerate}
+
+\hypertarget{paso-3-3-puntos}{%
+\section{Paso 3 (3 puntos)}\label{paso-3-3-puntos}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Aplica un modelo de \texttt{bagging} sobre \texttt{train}. Prueba
+  valores 50, 100, 150, 200 para el número de iteraciones. Calcula el
+  rmse en test para cada modelo de bagging y quédate con el mejor
+  modelo. Llama a ese modelo \texttt{mod\_bagging}, a su predicción
+  \texttt{pred\_bagging} y a su RMSE \texttt{rmse\_bagging}.
+\item
+  Aplica un modelo de random forest denominado \texttt{mod\_rf}. Genera
+  valores de \texttt{ntree} de 100 a 500 de 100 en 100. Genera valores
+  de \texttt{mtry} de 2 al número de columnas de train de 3 en 3.
+  Quédate con el mejor modelo y, de forma similar al apartado anterior,
+  utiliza la nomenclatura \texttt{mod\_rf}, \texttt{pred\_rf} y
+  \texttt{rmse\_rf}.
+\item
+  Aplica un modelo de boosting denominado \texttt{mod\_boost}.
+  Utilizando los parámetros \texttt{eta}, \texttt{max\_depth},
+  \texttt{subsample}, \texttt{colsample\_bytree}, genera un mínimo de 50
+  combinaciones (en total) y quédate con la mejor. De nuevo, utiliza la
+  nomenclatura \texttt{pred\_boost} y \texttt{rmse\_boost}. Utiliza un
+  \texttt{early\ stopping} de 50 y \texttt{nrounds} de 1000
+\end{enumerate}
+
+\hypertarget{paso-4-1.5-puntos}{%
+\section{Paso 4 (1.5 puntos)}\label{paso-4-1.5-puntos}}
+
+Compara los \(RMSE\) de los 4 modelos que hemos generado
+(\emph{baseline}, bagging, random forest y boosting). ¿Cuál predice
+mejor? \emph{(Contestar a la pregunta en un comentario)}
+
+En este caso, al tratarse de unos datos temporales, podemos representar
+fácilmente la información. Genera un gráfico \emph{similar} al siguiente
+en el que se compare el valor real en test con el predicho por
+\textbf{cada modelo}, es decir, debes hacer \textbf{un gráfico para
+baseline, bagging, random forest y boosting}.
+
+\includegraphics{03_modelizacion_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\begin{quote}
+\textbf{Nota:} en el gráfico anterior se ha modificado la apariencia
+básica de ggplot2. Se dará puntuación extra si se hace el esfuerzo de
+hacer un gráfico lo más parecido posible.
+\end{quote}
+
+\hypertarget{paso-5-2-puntos}{%
+\section{Paso 5 (2 puntos)}\label{paso-5-2-puntos}}
+
+Vamos a enriquecer el conjunto de datos para ver si podemos mejorar la
+predicción.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Descarga del aula virtual el conjunto de datos
+  \texttt{dias\_laborables.RDS}. Importa este conjunto de datos
+  (recuerda que tiene un formato \texttt{.RDS}). Este
+  \texttt{data.frame} contiene una variable \texttt{fecha} y otra
+  variable \texttt{laborable} que toma valor \(1\) si es un día
+  laborable o \(0\) si es un festivo, sábado o domingo.
+\item
+  Añade esta información a \texttt{train} y \texttt{test} utilizando la
+  función \texttt{left\_join()} de forma adecuada.
+\item
+  Reentrena los modelos \texttt{baseline}, \texttt{bagging},
+  \texttt{random\ forest} y \texttt{boosting} con esta nueva información
+  (para el modelo baseline utiliza
+  \texttt{pm25\ \textasciitilde{}\ pm25\_lag\ +\ laborable}). Llama a
+  cada modelo igual que hicimos antes pero terminado en 2 (por ejemplo,
+  \texttt{mod\_boost2}, \texttt{pred\_boost2}, \texttt{rmse\_boost2}).+
+\item
+  Calcula y representa gráficamente la importancia de las variables del
+  modelo de boosting. ¿Es relevante que un día sea laborable para el
+  modelo?
+\item
+  ¿Se mejoran los valores de \(RMSE\) conseguidos anteriormente? Para
+  contestar a la pregunta genera un data frame con una columna
+  \texttt{modelo} y otra \texttt{rmse} donde se recojan los valores de
+  forma similar a la tabla siguiente (los valores de la tabla del
+  ejemplo no tienen por qué ser reales). Guarda este data frame como un
+  archivo \texttt{.RDS} utilizando la función \texttt{writeRDS()}.
+\end{enumerate}
+
+\begin{verbatim}
+## # A tibble: 8 x 2
+##   modelo          rmse
+##   <chr>          <dbl>
+## 1 baseline        3.21
+## 2 baseline2       3.20
+## 3 bagging         2.92
+## 4 bagging2        2.88
+## 5 random forest   2.94
+## 6 random forest2  2.91
+## 7 boosting        2.91
+## 8 boosting2       2.89
+\end{verbatim}
+
+\end{document}

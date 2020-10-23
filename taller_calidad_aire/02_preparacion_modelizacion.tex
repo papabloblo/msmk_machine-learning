@@ -1,0 +1,469 @@
+\PassOptionsToPackage{unicode=true}{hyperref} % options for packages loaded elsewhere
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provides euro and other symbols
+\else % if luatex or xelatex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage[]{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\usepackage{hyperref}
+\hypersetup{
+            pdftitle={2. Preparación para modelización},
+            pdfauthor={Minería de datos II},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs}
+% Fix footnotes in tables (requires footnote package)
+\IfFileExists{footnote.sty}{\usepackage{footnote}\makesavenoteenv{longtable}}{}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+% set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+
+\title{2. Preparación para modelización}
+\providecommand{\subtitle}[1]{}
+\subtitle{Taller: calidad del aire}
+\author{Minería de datos II}
+\date{Curso 2019/2020}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\hypertarget{entorno}{%
+\section{Entorno}\label{entorno}}
+
+Crea un \textbf{script R} en la carpeta
+\texttt{taller\_calidad\_aire/src} que se llame
+\texttt{02\_preparacion\_modelizacion.R}; será el script que
+desarrollaremos en este documento.
+
+Al principio del script, carga el paquete \texttt{tidyverse}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## -- Attaching packages --------------------------------------------- tidyverse 1.3.0 --
+\end{verbatim}
+
+\begin{verbatim}
+## v ggplot2 3.2.1     v purrr   0.3.3
+## v tibble  2.1.3     v dplyr   0.8.3
+## v tidyr   1.0.0     v stringr 1.4.0
+## v readr   1.3.1     v forcats 0.4.0
+\end{verbatim}
+
+\begin{verbatim}
+## -- Conflicts ------------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+\end{verbatim}
+
+\hypertarget{importaciuxf3n-de-datos}{%
+\section{Importación de datos}\label{importaciuxf3n-de-datos}}
+
+Para comenzar a trabajar, necesitamos importar los datos que obtuvimos
+de la fase anterior. Como lo que guardamos fue un archivo \texttt{.RDS},
+los datos ya serán un \texttt{data.frame} de R y, por tanto, no tenemos
+que preocuparnos del formato de los datos como teníamos que hacerlo con
+un \texttt{.csv}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire <-}\StringTok{ }\KeywordTok{readRDS}\NormalTok{(}\StringTok{"taller_calidad_aire/data/01_transformacion.RDS"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{anuxe1lisis-exploratorio-de-datos}{%
+\section{Análisis exploratorio de
+datos}\label{anuxe1lisis-exploratorio-de-datos}}
+
+Antes de realizar cualquier transformación sobre los datos, necesitamos
+conocerlos en profundidad. En cualquier proyecto de minería de datos,
+una de las primeras fases una vez que los datos se han importado
+correctamente es hacer un \textbf{análisis exploratorio de datos}
+(\emph{EDA}).
+
+Un paquete que nos puede ayudar a esto es el paquete \texttt{skimr}.
+Este paquete nos da un resumen de los datos.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{skimr}\OperatorTok{::}\KeywordTok{skim}\NormalTok{(calidad_aire)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{longtable}[]{@{}ll@{}}
+\caption{Data summary}\tabularnewline
+\toprule
+\endhead
+Name & calidad\_aire\tabularnewline
+Number of rows & 1064\tabularnewline
+Number of columns & 18\tabularnewline
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &\tabularnewline
+Column type frequency: &\tabularnewline
+Date & 1\tabularnewline
+numeric & 17\tabularnewline
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_ &\tabularnewline
+Group variables & None\tabularnewline
+\bottomrule
+\end{longtable}
+
+\textbf{Variable type: Date}
+
+\begin{longtable}[]{@{}lrrlllr@{}}
+\toprule
+skim\_variable & n\_missing & complete\_rate & min & max & median &
+n\_unique\tabularnewline
+\midrule
+\endhead
+fecha & 0 & 1 & 2017-01-01 & 2019-11-30 & 2018-06-16 &
+1064\tabularnewline
+\bottomrule
+\end{longtable}
+
+\textbf{Variable type: numeric}
+
+\begin{longtable}[]{@{}lrrrrrrrrr@{}}
+\toprule
+skim\_variable & n\_missing & complete\_rate & mean & sd & p0 & p25 &
+p50 & p75 & p100\tabularnewline
+\midrule
+\endhead
+ano & 0 & 1 & 2017.97 & 0.81 & 2017.00 & 2017.00 & 2018.00 & 2019.00 &
+2019.00\tabularnewline
+mes & 0 & 1 & 6.37 & 3.37 & 1.00 & 3.00 & 6.00 & 9.00 &
+12.00\tabularnewline
+dia & 0 & 1 & 15.71 & 8.80 & 1.00 & 8.00 & 16.00 & 23.00 &
+31.00\tabularnewline
+so2 & 0 & 1 & 7.28 & 2.49 & 2.50 & 5.30 & 7.00 & 8.57 &
+18.20\tabularnewline
+co & 0 & 1 & 0.35 & 0.13 & 0.14 & 0.26 & 0.31 & 0.40 &
+1.00\tabularnewline
+no & 0 & 1 & 18.70 & 23.97 & 1.58 & 5.12 & 8.69 & 21.01 &
+171.75\tabularnewline
+no2 & 0 & 1 & 37.44 & 17.34 & 8.83 & 24.54 & 33.56 & 47.26 &
+104.33\tabularnewline
+pm25 & 0 & 1 & 9.93 & 5.14 & 2.40 & 6.00 & 9.20 & 12.68 &
+40.33\tabularnewline
+pm10 & 0 & 1 & 18.58 & 10.37 & 2.58 & 10.98 & 17.00 & 23.55 &
+144.17\tabularnewline
+nox & 0 & 1 & 66.11 & 52.38 & 12.08 & 32.42 & 47.34 & 79.29 &
+361.83\tabularnewline
+o3 & 0 & 1 & 51.24 & 22.99 & 2.57 & 33.68 & 54.82 & 70.11 &
+105.36\tabularnewline
+tol & 0 & 1 & 2.11 & 1.72 & 0.20 & 1.01 & 1.60 & 2.55 &
+13.52\tabularnewline
+ben & 0 & 1 & 0.49 & 0.33 & 0.12 & 0.27 & 0.38 & 0.60 &
+2.20\tabularnewline
+ebe & 0 & 1 & 0.46 & 0.51 & 0.10 & 0.18 & 0.28 & 0.50 &
+3.45\tabularnewline
+tch & 0 & 1 & 1.43 & 0.12 & 1.11 & 1.35 & 1.41 & 1.48 &
+2.05\tabularnewline
+ch4 & 0 & 1 & 1.33 & 0.10 & 0.98 & 1.27 & 1.32 & 1.37 &
+1.91\tabularnewline
+nmhc & 0 & 1 & 0.10 & 0.04 & 0.01 & 0.07 & 0.10 & 0.13 &
+0.31\tabularnewline
+\bottomrule
+\end{longtable}
+
+\begin{quote}
+\textbf{Nota:} recuerda que al escribir \texttt{skimr::skim} le estamos
+diciendo a R que utilice la función \texttt{skim} que pertence al
+paquete \texttt{skimr}. Esto es útil cuando queremos utilizar la función
+\texttt{skim} una única vez y, por lo tanto, no hace falta hacer
+\texttt{library(skimr)}.
+\end{quote}
+
+Si te fijas en la columan \texttt{m\_missing} del resultado anterior,
+sabemos que no tenemos ningún dato ausente en ninguna variable. Por lo
+tanto, no hará falta recurrir a la imputación de valores ausentes.
+
+En el apartado de la variable fecha de la salida anterior podemos ver
+que los datos van desde el \texttt{2017-01-01} hasta
+\texttt{2019-11-30}.
+
+La variable que queremos predecir es \texttt{pm25}, así que vamos a
+estudiarla en más detalle.
+
+\hypertarget{variable-pm25}{%
+\subsection{\texorpdfstring{Variable
+\texttt{pm25}}{Variable pm25}}\label{variable-pm25}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ calidad_aire,}
+       \KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ fecha, }\DataTypeTok{y =}\NormalTok{ pm25)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{02_preparacion_modelizacion_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+En el gráfico anterior de puede apreciar un patrón \emph{ondulante} que
+parece repetirse anualmente. Podemos verlo de forma más clara si
+añadimos la capa \texttt{geom\_smooth()}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ calidad_aire,}
+       \KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ fecha, }\DataTypeTok{y =}\NormalTok{ pm25)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_smooth}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `geom_smooth()` using method = 'gam' and formula 'y ~ s(x, bs = "cs")'
+\end{verbatim}
+
+\includegraphics{02_preparacion_modelizacion_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+La distribución de la variable podemos verla mediante un histograma:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ggplot}\NormalTok{(}\DataTypeTok{data =}\NormalTok{ calidad_aire,}
+       \KeywordTok{aes}\NormalTok{(}\DataTypeTok{x =}\NormalTok{ pm25)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_histogram}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+\end{verbatim}
+
+\includegraphics{02_preparacion_modelizacion_files/figure-latex/unnamed-chunk-7-1.pdf}
+
+\hypertarget{construcciuxf3n-de-variables}{%
+\section{Construcción de variables}\label{construcciuxf3n-de-variables}}
+
+Recordemos que el objetivo es \textbf{predecir el valor de \texttt{pm25}
+en el día posterior}. Eso significa que, si queremos predecir el valor
+para el 9 de febrero, tenemos que suponer que \textbf{solamente
+conocemos la información hasta el día 8 de febrero}. Por lo tanto, el
+valor que podremos utilizar de las variables para predecir un día, debe
+ser la información disponible hasta el día anterior. Por ejemplo, no
+podemos utilizar el valor de \texttt{so2} en el mismo día que el valor
+de \texttt{pm25} que queremos predecir. Necesitamos que el valor de cada
+variable esté \emph{retrasado} en un día. Esto lo podemos hacer mediante
+la función \texttt{lag}. Para entenderlo, vamos hacer primero un
+ejemplo. Si tuviésemos el vector \texttt{c(1,2,3,4)}, si aplicamos la
+función \texttt{lag} obtendríamos
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{lag}\NormalTok{(}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{,}\DecValTok{3}\NormalTok{,}\DecValTok{4}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] NA  1  2  3
+\end{verbatim}
+
+Obviamente, el valor anterior del primer elemento del vector es
+desconocido y por eso aparece como \texttt{NA}.
+
+Antes de utilizar la función \texttt{lag} debemos asegurarnos de que los
+datos estén ordenados de menor a mayor por la variable fecha, porque en
+caso contrario no tendría sentido lo que estaríamos haciendo:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire <-}\StringTok{ }\KeywordTok{arrange}\NormalTok{(calidad_aire, fecha)}
+\end{Highlighting}
+\end{Shaded}
+
+Y ahora generamos una nueva variable \texttt{\_lag} por cada variable
+que tengamos que retrasar. Por ejemplo
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire}\OperatorTok{$}\NormalTok{so2_lag <-}\StringTok{ }\KeywordTok{lag}\NormalTok{(calidad_aire}\OperatorTok{$}\NormalTok{so2)}
+\end{Highlighting}
+\end{Shaded}
+
+Este procedimiento habría que repetirlo demasiadas veces y sería
+demasiado pesado para hacerlo de forma manual. Para \emph{automatizarlo}
+podemos utilizar la función \texttt{mutate\_at}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire <-}\StringTok{ }\NormalTok{calidad_aire }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{mutate_at}\NormalTok{(}\KeywordTok{vars}\NormalTok{(so2}\OperatorTok{:}\NormalTok{nmhc), }\KeywordTok{list}\NormalTok{(}\DataTypeTok{lag =}\NormalTok{ lag))}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{Nota}: lo que acabamos de hacer se puede traducir como: aplica
+la función \texttt{lag} a aquellas variables que están entre
+\texttt{so2} y \texttt{nmhc}. Al utilizar \texttt{list(lag\ =\ lag)},
+cada variable que se crea termina en \texttt{\_lag}.
+
+Para finalizar la creación de estas variables, debemos eliminar todas
+las variables que no son lag y quedarnos solamente con \texttt{pm25} que
+es la variable que queremos predecir.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{calidad_aire <-}\StringTok{ }\NormalTok{calidad_aire }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{select}\NormalTok{(fecha, ano}\OperatorTok{:}\NormalTok{dia, so2_lag}\OperatorTok{:}\NormalTok{nmhc_lag, pm25)}
+\end{Highlighting}
+\end{Shaded}
+
+Es interesante conocer la correlación de la variable objetivo con
+respecto a las predictoras:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{cor}\NormalTok{(calidad_aire}\OperatorTok{$}\NormalTok{pm25, }
+    \KeywordTok{select}\NormalTok{(calidad_aire, }\KeywordTok{ends_with}\NormalTok{(}\StringTok{"lag"}\NormalTok{)), }
+    \DataTypeTok{use =} \StringTok{"complete.obs"}
+\NormalTok{    )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##        so2_lag    co_lag    no_lag   no2_lag  pm25_lag  pm10_lag   nox_lag
+## [1,] 0.4284642 0.5468669 0.4825432 0.5294305 0.6936286 0.5976506 0.5138496
+##          o3_lag   tol_lag   ben_lag ebe_lag   tch_lag   ch4_lag  nmhc_lag
+## [1,] -0.2627425 0.4335614 0.4198621  0.1981 0.4062614 0.3397541 0.3181111
+\end{verbatim}
+
+\begin{quote}
+\textbf{Nota}: en la correlación utilizamos
+\texttt{use\ =\ "complete.obs"} para que no tenga en cuenta los
+\texttt{NA} en el cálculo.
+\end{quote}
+
+Puedes ver que la mayor correlación de \texttt{pm25} se da con
+\texttt{pm25\_lag}.
+
+\hypertarget{train-y-test}{%
+\section{Train y test}\label{train-y-test}}
+
+Por último, como hacemos habitualmente, vamos a dividir el conjunto de
+datos en \texttt{train} y \texttt{test}. Entrenaremos con datos hasta
+\texttt{2019-09-01} y los restantes para \texttt{test}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{train <-}\StringTok{ }\NormalTok{calidad_aire[calidad_aire}\OperatorTok{$}\NormalTok{fecha }\OperatorTok{<}\StringTok{ }\KeywordTok{as.Date}\NormalTok{(}\StringTok{"2019-09-01"}\NormalTok{),]}
+\NormalTok{test <-}\StringTok{ }\NormalTok{calidad_aire[calidad_aire}\OperatorTok{$}\NormalTok{fecha }\OperatorTok{>=}\StringTok{ }\KeywordTok{as.Date}\NormalTok{(}\StringTok{"2019-09-01"}\NormalTok{),]}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{exportaciuxf3n-de-la-informaciuxf3n}{%
+\section{Exportación de la
+información}\label{exportaciuxf3n-de-la-informaciuxf3n}}
+
+Igual que hicimos en la fase anterior, alamacenamos estos datos en el
+disco duro.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{saveRDS}\NormalTok{(train, }\DataTypeTok{file =} \StringTok{"taller_calidad_aire/data/train.RDS"}\NormalTok{)}
+\KeywordTok{saveRDS}\NormalTok{(test, }\DataTypeTok{file =} \StringTok{"taller_calidad_aire/data/test.RDS"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\end{document}

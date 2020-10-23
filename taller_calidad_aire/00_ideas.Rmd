@@ -1,0 +1,61 @@
+---
+title: "IDEAS"
+author: "Pablo Hidalgo García"
+date: "1/15/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Datos
+
+- **Calidad del aire (diario)**:  https://datos.madrid.es/sites/v/index.jsp?vgnextoid=aecb88a7e2b73410VgnVCM2000000c205a0aRCRD&vgnextchannel=374512b9ace9f310VgnVCM100000171f5a0aRCRD
+
+- **Episodios de contaminación**: https://datos.madrid.es/sites/v/index.jsp?vgnextoid=1ae9d1caa41be610VgnVCM1000001d4a900aRCRD&vgnextchannel=374512b9ace9f310VgnVCM100000171f5a0aRCRD
+
+- **Meteorología**: https://datos.madrid.es/sites/v/index.jsp?vgnextoid=8d7357cec5efa610VgnVCM1000001d4a900aRCRD&vgnextchannel=374512b9ace9f310VgnVCM100000171f5a0aRCRD
+
+# Importación y tratamiento de datos
+
+## Descarga de datos
+
+Dos opciones: descarga de los .csv manuales o descarga directamente de Internet.
+
+## Tratamiento de datos
+
+- Nombre de las variables en minúscula.
+- Cambiar `ano` por `anyo`.
+- Elegir el tipo de datos correcto
+- Pasar a forma normal.
+
+# Generación de variables
+
+- Qué magnitud queremos predecir (¿PM2.5?) 
+- Pensar qué variables pueden afectar a la calidad del aire
+- Pensar qué variables NO se deberían usar (año)
+- Buscar cuáles se pueden calcular
+- Calcular:
+    - Medición del día anterior
+    - Medición media de la semana
+    - Medición media del mismo día de la semana
+    - Festivo
+    - Meteorología del día anterior
+    
+# Modelización
+
+- ¿Cómo medimos el éxito de predicción?
+  - ¿RMSE?
+  
+- Modelos:
+    - Regesión lineal
+    - Árboles
+    - KNN
+    - Bagging
+    - Random Forest
+    - Boosting
+
+- Interpretación del modelo.
+

@@ -1,0 +1,381 @@
+---
+title: "1. Transformación de los datos"
+subtitle: "Taller: calidad del aire"
+author: "Minería de datos II"
+date: "Curso 2019/2020"
+output: 
+  pdf_document:
+    number_sections: true
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Introducción
+
+El ayuntamiento de Madrid nos ha contratado para desarrollar un **modelo de la contaminación** que permita predecir el nivel de contaminación que habrá al día siguiente. Nos han enviado un conjunto de datos con mediciones diarias de la **calidad del aire de la ciudad de Madrid**. Aunque existen varias medidas que hay que tener en cuenta para medir la calidad del aire, el ayuntamiento nos ha pedido que elaboremos el modelo solamente para predecir **PM2.5**: **la concentración de partículas en suspensión de menos de $2.5$ micras.**
+
+Cualquier proyecto de minería de datos va a tener, al menos, **3 fases**:
+
+- Tratamiento de datos.
+- Modelización.
+- Evaluación.
+
+Empezaremos por importar los datos y hacer las transformaciones necesarias sobre ellos para poder empezar a trabajar.
+
+# Entorno
+
+Cuando se trabaja en un proyecto real, es importante ser *ordenado* en los códigos desarrollados ya que solemos trabajar en equipo. Abre el proyecto de RStudio que hemos creado en clase y crea una **nueva carpeta** que se llame `taller_calidad_aire`. Dentro de esta carpeta, crea otras dos que se denominen `data` y `src`. En la primera de ellas guardaremos los datos que puedes descargar del aula virtual. En la segunda carpeta será donde iremos desarrollando los scripts (`source`, es una práctica habitual en programación).
+
+
+# Transformación de los datos
+
+> Crea un **script R** en la carpeta `taller_calidad_aire/src` que se llame `01_transformacion.R`; será el script que desarrollaremos en este documento.
+
+Un paquete muy importante en R para el tratamiento de datos es `tidyverse`. Recuerda que este paquete contiene, a su vez, otros paquetes. Cárgalo al principio del script (si no lo tienes instalado, deberás instalarlo primero):
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+## Importación
+
+A continuación necesitamos **importar los datos** para poder empezar a trabajar con ellos:
+
+```{r}
+calidad_aire <- read_csv("taller_calidad_aire/data/calidad_aire.csv")
+```
+
+El archivo que estamos cargando tiene extensión `csv` (*comma-separated value*) un formato de datos muy utilizado para el intercambio de información. Si abres el archivo original, verás que la primera linea contiene el nombre de las variables separadas por comas y, el resto de líneas, contienen los datos:
+
+```{bash echo=FALSE}
+head -3 taller_calidad_aire/data/calidad_aire_train.csv
+```
+
+En el aula virtual también tienes el archivo `Interprete_ficheros_calidad_del_aire_global.pdf` con las descripción de cómo son los datos y qué estructura tienen. 
+
+## Estructura de los datos
+
+Podemos inspeccionarlos en la consola para ver cómo los ha importado R:
+
+```{r}
+calidad_aire
+```
+
+El conjunto de datos contiene **`r ncol(calidad_aire)` variables** y **`r nrow(calidad_aire)` filas**. Tenemos **dos grupos de variables**. El primero de ellos contiene la información para identificar cómo, dónde y cuándo se ha realizado una medición:
+
+- `PROVINCIA`
+- `MUNICIPIO`
+- `ESTACION`
+- `MAGNITUD`
+- `PUNTO_MUESTREO`
+- `ANO`
+- `MES`
+
+El segundo grupo de variables contiene una variable para cada día del mes `D01`, `D02`, `D03`, ..., `D31` con el valor de la magnitud medida y, asociada a cada variable, otras `V01`, `V02`, ..., `V31` que indican si la medida ha sido comprobada y es correcta (`V`) o no (`N`). 
+
+> **Esta estructura de los datos no es adecuada para realizar los análisis**. Imagina que quisiésemos obtener **la medición de la magnitud 1 de todos los lunes del año**. En este caso, la estructura de los datos hace difícil responder a esa pregunta. 
+
+## Eliminación de variables irrelevantes
+
+Antes de cambiar la estructura, vamos a hacer algunas operaciones de limpieza. Aunque no es imprescindible, vamos a convertir el nombre de las variables a minúscula con la función `tolower` para favorecer la consistencia:
+
+```{r}
+names(calidad_aire) <- tolower(names(calidad_aire))
+```
+
+Puede que **algunas variables sean prescindibles**. Por ejemplo, a veces se da el caso de que hay **variables con un único valor** (*variables unarias*) y que, por tanto, no aportan nada al análisis. Por ejemplo, la variable `provincia` es una de ellas. Podemos comprobarlo pidiédole a R que nos diga cuántos valores distintos contiene esta variable:
+
+```{r}
+length(unique(calidad_aire$provincia))
+```
+
+Obviamente, si el número de variables es elevado (en este caso son 69), no podemos hacer esta comprabación de forma manual. Podemos escribir el siguiente bucle para comprobarlo automáticamente:
+
+```{r}
+var_unarias <- c()
+for (var in names(calidad_aire)){
+  if (length(unique(calidad_aire[[var]])) == 1){
+    var_unarias <- c(var_unarias, var)
+  }
+}
+```
+
+**Opcional:** *aunque el bucle anterior es perfectamente válido, conforme se va ganando experiencia en programación, se busca escribir código lo más legible posible ya que esto facilitará la tarea de corregir errores. Una alternativa al código anterior podría ser:*
+
+```{r}
+var_unarias <- sapply(calidad_aire, function(x)length(unique(x)) == 1)
+var_unarias <- names(calidad_aire)[var_unarias]
+```
+
+El vector que obtenemos contiene solamente dos variables
+
+```{r}
+var_unarias
+```
+
+Por tanto, eliminamos estas dos variables del conjunto de datos
+
+```{r}
+calidad_aire$provincia <- NULL
+calidad_aire$municipio <- NULL
+```
+
+Además, la variable `punto_muestreo` no es relevante para nuestro estudio (según el pdf de la documentación, este campo es la concatenación de provincia, municipio, estación, magnitud y la técnica de muestreo, información que ya tenemos recogida en otras variables) y procedemos a eliminarla también:
+
+```{r}
+calidad_aire$punto_muestreo <- NULL
+```
+
+## Formato adecuado de variables
+
+El siguiente paso es comprobar que las variables estén en el formato adecuado:
+
+```{r}
+glimpse(calidad_aire)
+```
+
+
+La primera variable que nos encontramos en un formato no adecuado es `mes`. Esta variable aparece como carácter (`char`) mientras que lo lógico sería que fuese un número (en particular, un número entero). Podemos convertirla de la siguiente forma:
+
+```{r}
+calidad_aire$mes <- as.integer(calidad_aire$mes)
+```
+
+Algo parecido nos sucede con las mediciones. Todas las variables `d01`, `d02`, etcétera son carácter cuando deberían ser numéricas. En este caso, convertirlas al formato adecuado es algo más complejo. Aunque hay distintas formas de hacerlo, vamos a recurrir a una función del paquete `tidyverse` que cargamos al principio:
+
+```{r}
+calidad_aire <- mutate_at(calidad_aire, vars(starts_with("d")), as.numeric)
+```
+
+> **Si alguna de las funciones que utilizamos no entiendes bien su uso, asegúrate de acudir a la ayuda (`?mutate_at`)**
+
+## Cambio de estructura
+
+Ahora es donde llegamos a la transformación realmente importante. No es una buena idea mantener la estructura actual de los datos. Fíjate en que no es una forma natural de representar la información, hay meses que tienen 31 días, otros 30 y febrero aún menos. Esto supondrá que no es eficiente esa codificación. Lo que nos gustaría es poder construir una variable que exprese el día del mes y una única variable con la medición correspondiente.
+
+Para ello, primero separamos el conjunto de datos en dos, uno para las variables con el valor de la magnitud (`d01`, `d02`,...) y otro con las que verifican ese valor (`v01`, `v02`,...).
+
+```{r}
+calidad_aire_medicion <- calidad_aire %>% 
+  select(
+    estacion:mes,
+    starts_with("d")
+  )
+
+calidad_aire_validado <- calidad_aire %>% 
+  select(
+    estacion:mes,
+    starts_with("v")
+  )
+```
+
+Ahora, convertimos los datos con ayuda de la función  `pivot_longer` (**nota**: *asegúrate de que entiendes qué es lo que queremos hacer y cómo nos ayuda esta función a conseguirlo*).
+
+```{r}
+calidad_aire_medicion <- calidad_aire_medicion %>% 
+  pivot_longer(
+    cols = d01:d31,
+    names_to = "dia",
+    values_to = "medicion"
+  )
+```
+
+Obtenemos así la siguiente estructura del `data.frame`:
+
+```{r}
+calidad_aire_medicion
+```
+
+Nos falta modificar la variable `dia` para que se numérica. Fíjate que todos los valores empiezan por `d`, así que no podemos utilizar directamente `as.numeric`. Primero tendremos que eliminar esa `d`:
+
+```{r}
+calidad_aire_medicion$dia <- substr(calidad_aire_medicion$dia, start = 2, stop = 3)
+```
+
+Y después convertir a numérica que, en este caso, como el día va a ser un número entero, utilizamos `as.integer`:
+
+```{r}
+calidad_aire_medicion$dia <- as.integer(calidad_aire_medicion$dia)
+```
+
+
+Repetimos el mismo procedimiento con `calidad_aire_validado`:
+
+```{r}
+calidad_aire_validado <- calidad_aire_validado %>% 
+  pivot_longer(
+    cols = v01:v31,
+    names_to = "dia",
+    values_to = "validado"
+  )
+
+calidad_aire_validado$dia <- substr(calidad_aire_validado$dia, start = 2, stop = 3)
+calidad_aire_validado$dia <- as.integer(calidad_aire_validado$dia)
+```
+
+Ahora, cruzaremos la información que tenemos de la medición y su corresponiente validación:
+
+```{r}
+calidad_aire <- calidad_aire_medicion %>% 
+  left_join(calidad_aire_validado)
+```
+
+## Eliminación de observaciones erróneas
+
+Aquellas mediciones que no hayan sido validadas, contienen un valor que no podemos estar seguros de su uso. Vamos a convertir a `NA` aquellas mediciones no validadas.
+
+```{r}
+calidad_aire$medicion[calidad_aire$validado == "N"] <- NA
+```
+
+Tenemos todavía un problema que resolver: hay observaciones que no tienen sentido. Por ejemplo, tenemos una observación para el 30 de febrero:
+
+```{r}
+filter(calidad_aire, mes == 2, dia == 30)
+```
+
+
+
+> **Ejercicio**: elimina del conjunto de datos `calidad_aire` todas las observaciones erróneas. Es decir, en aquellos meses con 30 días, no debería aparecer la observación con valor `dia = 31`. También hay que eliminar las observaciones que no tiene sentido del mes de febrero (cuidado con los bisiestos).
+
+```{r include=FALSE}
+# Meses con 30 días
+meses_30 <- c(4, 6, 9, 11)
+
+calidad_aire <- filter(calidad_aire, !(mes %in% meses_30 & dia == 31))
+
+is.bisiesto <- function(x){
+ ifelse(
+   x %% 4 != 0,
+   FALSE,
+   ifelse(
+     x %% 100 != 0,
+     TRUE,
+     ifelse(
+       x %% 400 == 0,
+       TRUE,
+       FALSE
+       )
+     )
+   ) 
+}
+
+calidad_aire <- calidad_aire %>% 
+  mutate(bisiesto = is.bisiesto(ano)) %>% 
+  filter(
+    !(mes == 2 & bisiesto & dia > 29),
+    !(mes == 2 & !bisiesto & dia > 28),
+    )
+```
+
+## Medición en columnas
+
+Si te fijas, tenemos una medición asociada a cada **día**, **magnitud** y  **estación de medición**. Vamos a simplificar este conjunto de datos de forma que tengamos la **medición diaria media para cada magnitud**. Esto podemos hacerlo de la siguiente forma:
+
+```{r}
+calidad_aire <- calidad_aire %>% 
+  group_by(magnitud, ano, mes, dia) %>% 
+  summarise(medicion = mean(medicion, na.rm = TRUE)) %>% 
+  ungroup()
+```
+
+Para terminar la preparación de los datos, nos gustaría que cada magnitud estuviese recogida en una variable. Primero, la variable `magnitud` está codificada mediante números que no son muy informativos. En la documentación aparece con qué magnitud se corresponde cada número. Lo podemos traducir de la siguiente manera:
+
+```{r}
+unique(calidad_aire$magnitud)
+calidad_aire$magnitud2 <- calidad_aire$magnitud
+
+calidad_aire$magnitud2[calidad_aire$magnitud == 1] <- "so2"
+calidad_aire$magnitud2[calidad_aire$magnitud == 6] <- "co"
+calidad_aire$magnitud2[calidad_aire$magnitud == 7] <- "no"
+calidad_aire$magnitud2[calidad_aire$magnitud == 8] <- "no2"
+calidad_aire$magnitud2[calidad_aire$magnitud == 9] <- "pm25"
+calidad_aire$magnitud2[calidad_aire$magnitud == 10] <- "pm10"
+calidad_aire$magnitud2[calidad_aire$magnitud == 12] <- "nox"
+calidad_aire$magnitud2[calidad_aire$magnitud == 14] <- "o3"
+calidad_aire$magnitud2[calidad_aire$magnitud == 20] <- "tol"
+calidad_aire$magnitud2[calidad_aire$magnitud == 30] <- "ben"
+calidad_aire$magnitud2[calidad_aire$magnitud == 35] <- "ebe"
+calidad_aire$magnitud2[calidad_aire$magnitud == 42] <- "tch"
+calidad_aire$magnitud2[calidad_aire$magnitud == 43] <- "ch4"
+calidad_aire$magnitud2[calidad_aire$magnitud == 44] <- "nmhc"
+
+calidad_aire$magnitud <- calidad_aire$magnitud2
+calidad_aire$magnitud2 <- NULL
+```
+
+**Opcional:** una buena práctica en programación es no repetir innecesariamente el código escrito. En el trozo de código que acabamos de escribir, esto no se cumple, haciendo un código difícil de leer y de corregir si se produce un error. Una forma algo más elegante de hacerlo podría ser:
+
+```{r eval=FALSE}
+magnitud_diccionario <- tribble(
+  ~magnitud, ~magnitud2,
+   1,  "so2",
+   6,   "co",
+   7,   "no",
+   8,  "no2",
+   9, "pm25",
+  10, "pm10",
+  12,  "nox",
+  14,   "o3",
+  20,  "tol",
+  30,  "ben",
+  35,  "ebe",
+  42,  "tch",
+  43,  "ch4",
+  44,  "nmhc"
+  )
+
+calidad_aire <- calidad_aire %>% 
+  left_join(magnitud_diccionario)
+  
+calidad_aire$magnitud <- calidad_aire$magnitud2
+calidad_aire$magnitud <- NULL
+```
+
+
+En realidad, cada magnitud debería ser una variable distinta. Es decir, nos gustaría tener una variable para `so2`, otra para `co`, etcétera. Para ello, hay que hacer la operación *contraria* a la que ya hicimos con `pivot_longer`:
+
+```{r}
+calidad_aire <- calidad_aire %>% 
+  pivot_wider(names_from = magnitud, 
+              values_from = medicion
+              )
+```
+
+Esto nos lleva a tener un conjunto de datos listo para empezar a trabajar la modelización:
+
+```{r}
+calidad_aire
+```
+
+Por último, nos será útil tener una nueva variable fecha
+
+```{r}
+calidad_aire$fecha <- as.Date(ISOdate(year = calidad_aire$ano, 
+                                      month = calidad_aire$mes, 
+                                      day = calidad_aire$dia
+                                      )
+                              )
+```
+
+
+# Exportación de la información
+
+Ya dijimos que cualquier proyecto de minería de datos va a estar dividido en etapas. Estas etapas, en función de cómo sean los datos, pueden tardar tiempo en ejecutarse. Por tanto, siempre que se concluye una etapa, se guardan los datos resultantes para no tener que volver a ejecutar el proceso. Además, recuerda que **R trabaja en memoria**, es decir, si cierras RStudio y vuelves a abrirlo, habrán desaparecido los datos con los que estábamos trabajando. 
+
+Para guardar en el disco duro un `data.frame`, lo podemos hacer de la siguiente forma:
+
+```{r}
+saveRDS(calidad_aire, file = "taller_calidad_aire/data/01_transformacion.RDS")
+```
+
+Este archivo está en un **formato que solo entiende R** ya que todavía tenemos que seguir trabajando con esos datos mediante R. Si estuviésemos en la etapa final, lo adecuado sería guardar el archivo en un formato que pudiese leer cualquier programa (por ejemplo, `.csv`).
+
+
+
+
+
